@@ -1,0 +1,24 @@
+Function Remove-Silverlight {
+    # Check if Microsoft Silverlight is installed
+    $silverlight = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" |
+                   Where-Object { $_.DisplayName -like "*Silverlight*" }
+
+    if ($silverlight) {
+        Write-Host "Uninstalling Microsoft Silverlight version $($silverlight.DisplayVersion)"
+
+        # Construct the uninstall command
+        $uninstallString = $silverlight.UninstallString
+        $uninstallCommand = '"' + $uninstallString + '" /quiet /norestart'
+
+        # Execute the uninstall command
+        Start-Process -FilePath "cmd.exe" -ArgumentList "/c", $uninstallCommand -Wait -NoNewWindow
+
+        Write-Host "Microsoft Silverlight has been successfully uninstalled."
+    }
+    else {
+        Write-Host "Microsoft Silverlight is not installed on this system."
+    }
+}
+
+# Example usage
+Remove-Silverlight
